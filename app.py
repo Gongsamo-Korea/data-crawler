@@ -14,7 +14,8 @@ def insert_new_data(page_number):
     if result_hash is None:
         result_msg = "NOT FOUND"
     else : 
-        result_msg = crawling.insert_new_newsletter(result_hash)
+        # result_msg = crawling.insert_new_newsletter(result_hash)
+        print ("insert")
 
     return {'data': str(page_number) +' '+result_msg}
 

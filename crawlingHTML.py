@@ -4,7 +4,7 @@ from connectToDB import dbConnect
 import emoji
 import re
 from datetime import datetime
-from getDateBySelenium import getDynamicData
+from getDateByBS import getDateValue
 from getContentBySelenium import getDynamicContentData
 
 def split_count(text):
@@ -52,8 +52,8 @@ class crawling:
                 issue_number = split_title[0][1:]
 
             # issue date
-            issue_date_format = getDynamicData.get_date(version)
-            date_format = '%Y. %m. %d.'
+            issue_date_format = getDateValue.extract_dateValue(163)
+            date_format = '%Y-%m-%d'
             issue_date = datetime.strptime(issue_date_format, date_format)
             print(issue_date)
 
@@ -170,8 +170,6 @@ class crawling:
 
 
     
-
-            
 
 
 #     

@@ -52,7 +52,7 @@ class crawling:
                 issue_number = split_title[0][1:]
 
             # issue date
-            issue_date_format = getDateValue.extract_dateValue(163)
+            issue_date_format = getDateValue.extract_dateValue(version)
             date_format = '%Y-%m-%d'
             issue_date = datetime.strptime(issue_date_format, date_format)
             print(issue_date)
@@ -72,21 +72,35 @@ class crawling:
                 result_hash['tags'] = None
                 
             # table of content
+            table_of_content_name = ""
+            if version > 160: 
+                table_of_content_name = "오늘의 김칩"
+            else : 
+                table_of_content_name = "오늘의 김치앤칩스"
+
             def find_table_of_content(table_name):
                 result = soup.find(lambda tag:tag.name=="span" and table_name in tag.text)
                 if result is None:
                     return None
             
-                else :
+                elif table_name == "오늘의 김치앤칩스" :
                     table = result.find_parent().find_parent().text.strip()
                     if len(re.sub(r'💬\s?오늘의 김치앤칩스', '', table))> 0:
                         return re.sub(r'💬\s?오늘의 김치앤칩스', '', table)
 
                     else : 
                         return result.find_parent().find_parent().find_next_sibling().text
+                
+                elif table_name == "오늘의 김칩" :
+                    table = result.find_parent().find_parent().text.strip()
+                    if len(re.sub(r'💬\s?오늘의 김칩', '', table))> 0:
+                        return re.sub(r'💬\s?오늘의 김칩', '', table)
+
+                    else : 
+                        return result.find_parent().find_parent().find_next_sibling().text
                     
 
-            table_of_content = find_table_of_content("오늘의 김치앤칩스")
+            table_of_content = find_table_of_content(table_of_content_name)
 
             result_text = ''
             ## 예전 뉴스레터는 목차가 오늘의 주요 MENU라고 나옴 
@@ -105,6 +119,8 @@ class crawling:
                         for r in table_sosik: 
                             result_text += r.text +"\n"
                         table_of_content = result_text
+            
+            print(table_of_content)
 
             # content
             content = soup.find("div", "email-content").prettify()
@@ -162,6 +178,13 @@ class crawling:
         db = dbConnect()
         article_id = crawling.get_article_id(result_hash['issue_number'])
         db.update_table_of_content(result_hash['content'], article_id)
+        crawling.close_db(db)
+    
+    def update_tag(result_hash):
+        db = dbConnect()
+        article_id = crawling.get_article_id(result_hash['issue_number'])
+        tag_id_list = db.insert_tags_to_tag_table(result_hash['tags']) 
+        db.insert_tags_id_to_tag_article_table(tag_id_list, article_id)
         crawling.close_db(db)
         
 

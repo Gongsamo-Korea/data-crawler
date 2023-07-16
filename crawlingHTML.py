@@ -177,7 +177,7 @@ class crawling:
     def update_content(result_hash):
         db = dbConnect()
         article_id = crawling.get_article_id(result_hash['issue_number'])
-        db.update_table_of_content(result_hash['content'], article_id)
+        db.update_content(result_hash['content'], article_id)
         crawling.close_db(db)
     
     def update_tag(result_hash):

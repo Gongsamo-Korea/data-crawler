@@ -40,4 +40,4 @@ def update(page_number, update_section):
     return {'data': str(page_number) +' update ' + update_section +' success'}
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')

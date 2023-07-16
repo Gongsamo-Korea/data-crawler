@@ -25,7 +25,7 @@ class dbConnect:
             exit(1)
 
        
-        self.c = self.mydb.cursor()
+        self.c = self.mydb.cursor(buffered=True)
        # cur.execute("USE archewiki")
 
         # 커서 획득

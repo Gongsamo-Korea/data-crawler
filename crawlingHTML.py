@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-from connectToDB import dbConnect
 import emoji
 import re
 from datetime import datetime

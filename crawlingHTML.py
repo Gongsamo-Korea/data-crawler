@@ -5,7 +5,8 @@ import emoji
 import re
 from datetime import datetime
 from getDateByBS import getDateValue
-from getContentBySelenium import getDynamicContentData
+from connectToElasticSearch import conectToES
+
 
 def split_count(text):
     return ''.join(c for c in text if c in emoji.UNICODE_EMOJI['en'])
@@ -54,7 +55,9 @@ class crawling:
             # issue date
             issue_date_format = getDateValue.extract_dateValue(version)
             date_format = '%Y-%m-%d'
-            issue_date = datetime.strptime(issue_date_format, date_format)
+            formatted_date = datetime.strptime(issue_date_format, date_format)
+            issue_date = formatted_date.strftime('%Y-%m-%d %H:%M:%S')
+
             print(issue_date)
 
             # tag 135회부터 있음
@@ -134,67 +137,22 @@ class crawling:
 
 
             return result_hash 
-
-    def get_article_id(issue_number, db = dbConnect()):
-            
-        article_id = db.retreive_article_id(issue_number)
-        return article_id
-        
-
-    def insert_new_newsletter(result_hash):
-        db = dbConnect()
-
-            
-        article_id = crawling.get_article_id(result_hash['issue_number'], db)
-            
-        # 이미 데이터가 들어있으면 넣지않기 
-        if article_id is None: 
-            db.insertArchiveData(result_hash['title'], result_hash['issue_number'], result_hash['issue_date'], result_hash['table_of_content'], result_hash['content'])
-            article_id = crawling.get_article_id(result_hash['issue_number'], db)
-            if result_hash['tags'] is not None: 
-                # tag 데이터 집어넣기 
-                tag_id_list = db.insert_tags_to_tag_table(result_hash['tags']) 
-                db.insert_tags_id_to_tag_article_table(tag_id_list, article_id)
-                crawling.close_db(db)
-                return "success"
-        else: 
-              return "already exist"
-        
-    def update_issue_date(result_hash):
-        db = dbConnect()
-
-        article_id = crawling.get_article_id(result_hash['issue_number'])
-        db.update_issue_date(result_hash['issue_date'], article_id)
-        crawling.close_db(db)
-
-    def update_table_of_content(result_hash):
-        db = dbConnect()
-
-        article_id = crawling.get_article_id(result_hash['issue_number'])
-        db.update_table_of_content(result_hash['table_of_content'], article_id)
-        crawling.close_db(db)
-
-    def update_content(result_hash):
-        db = dbConnect()
-        article_id = crawling.get_article_id(result_hash['issue_number'])
-        db.update_content(result_hash['content'], article_id)
-        crawling.close_db(db)
     
-    def update_tag(result_hash):
-        db = dbConnect()
-        article_id = crawling.get_article_id(result_hash['issue_number'])
-        tag_id_list = db.insert_tags_to_tag_table(result_hash['tags']) 
-        db.insert_tags_id_to_tag_article_table(tag_id_list, article_id)
-        crawling.close_db(db)
-        
+    #By ElasticSearch 
+    def get_doc_id_by_ES(title, issue_number):
+        doc_id = conectToES.getDocId(title, issue_number)
+        return doc_id
 
-    def close_db(db):
-        db.closeDB()
-
-
+    def update_data_in_ES(result_hash):
+        doc_id = crawling.get_doc_id_by_ES(result_hash['title'], result_hash['issue_number'])
+        conectToES.updateData(result_hash, doc_id)
+        return 'success'
     
-
-
-#     
-# 43, 18, 69 = 주요 소식 
-# 105, 72 = 오늘의 김치앤칩스 
+    def insert_data_to_ES(result_hash):
+        conectToES.insertData(result_hash)
+        return 'success'
+    
+    def update_tags_in_ES(result_hash):
+        doc_id = crawling.get_doc_id_by_ES(result_hash['title'], result_hash['issue_number'])
+        conectToES.updateTags(doc_id, result_hash['tags'])
+        return 'success'

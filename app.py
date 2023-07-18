@@ -14,30 +14,16 @@ def insert_new_data(page_number):
     if result_hash is None:
         result_msg = "NOT FOUND"
     else : 
-       result_msg = crawling.insert_new_newsletter(result_hash)
+       result_msg = crawling.insert_data_to_ES(result_hash)
        
-       
-
     return {'data': str(page_number) +' '+result_msg}
 
-@app.route("/update/<string:update_section>/<int:page_number>", methods=['POST', 'GET'])
-def update(page_number, update_section):
-
-    print(str(page_number) +" extracting...")
+@app.route("/update/tags/<int:page_number>", methods=['POST', 'GET'])
+def update_tags_to_ES(page_number):
     result_hash = crawling.extract_data(page_number)
-    if update_section == 'table_of_content':
-        crawling.update_table_of_content(result_hash)
+    crawling.update_tags_in_ES(result_hash)
     
-    elif update_section == 'issue_date':
-        crawling.update_issue_date(result_hash)
-    
-    elif update_section == 'content':
-        crawling.update_content(result_hash)
-    
-    elif update_section == 'tag':
-        crawling.update_tag(result_hash)
-
-    return {'data': str(page_number) +' update ' + update_section +' success'}
+    return {'data': ' success'}
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

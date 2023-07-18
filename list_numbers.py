@@ -27,10 +27,9 @@ def get_num_list():
     driver.get(url)
 
     #더보기 끝까지 누르기 
-    for i in range(13):
+    for i in range(15):
             driver.find_element(By.XPATH, value=("//span[contains(text(),'더보기')]")).click();
 
-    #parent_element = driver.find_element(By.CSS_SELECTOR, "#__next > div.styles__NewsLettersLayout-sc-1081fac-0.khBsEd > div.styles__NewsletterList-sc-1081fac-2.cERffU")
     parent_element = driver.find_element(By.XPATH, value=("//div[starts-with(@class, 'styles__NewsletterList')]"))
 
     children = parent_element.find_elements(By.CSS_SELECTOR, "a")

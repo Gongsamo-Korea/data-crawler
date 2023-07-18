@@ -16,6 +16,7 @@ class getDateValue:
 
         email_list_data = site_json['props']['pageProps']['emailListData']
 
+        date_value = ''
         for d in email_list_data:
             if d.get('id') == version:
                 date_value = d.get('publishedAt')

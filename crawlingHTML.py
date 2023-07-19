@@ -20,7 +20,7 @@ class crawling:
         result_hash = {}
         url = f"https://kimchinchips.stibee.com/p/{version}/"
         header = {'User-agent' : 'Mozila/2.0'}
-        response = requests.get(url, headers=header)
+        response = requests.get(url, headers=header, verify=False)
         html = response.text
         soup = BeautifulSoup(html, 'html.parser')
 
@@ -126,7 +126,6 @@ class crawling:
 
             # content
             content = soup.find("div", "email-content").prettify()
-            #content = getDynamicContentData.get_date(version)
 
             result_hash['title'] = title
             result_hash['issue_number'] = issue_number

@@ -4,7 +4,7 @@ import emoji
 import re
 from datetime import datetime
 from getDateByBS import getDateValue
-from connectToElasticSearch import conectToES
+from connectToElasticSearch import connectToES
 
 
 def split_count(text):
@@ -15,7 +15,29 @@ def has_numbers(inputString):
 
 
 class crawling:
+        
+    def find_table_of_content(target_span):
+        result = ''
+        bullet_point = "\u2022"
+        name_of_table = target_span.text
+        if target_span is None:
+            return None
 
+        if name_of_table == '오늘의 주요 MENU':
+            
+            table_menu = target_span.find_parent().find_next_siblings()
+            for r in table_menu:
+                result += "{} {} {}".format( bullet_point, r.text, "\n")
+
+        else : 
+            ul_list = target_span.find_parents(name="td")[0].find_all('ul')
+            for ul in ul_list: 
+                li_list = ul.find_all('li')
+                for li in li_list:
+                    result += "{} {} {}".format( bullet_point, li.text, "\n")
+        
+        return result
+                    
     def extract_data(version):
         result_hash = {}
         url = f"https://kimchinchips.stibee.com/p/{version}/"
@@ -74,58 +96,12 @@ class crawling:
                 result_hash['tags'] = None
                 
             # table of content
-            table_of_content_name = ""
-            if version > 160: 
-                table_of_content_name = "오늘의 김칩"
-            else : 
-                table_of_content_name = "오늘의 김치앤칩스"
-
-            def find_table_of_content(table_name):
-                result = soup.find(lambda tag:tag.name=="span" and table_name in tag.text)
-                if result is None:
-                    return None
-            
-                elif table_name == "오늘의 김치앤칩스" :
-                    table = result.find_parent().find_parent().text.strip()
-                    if len(re.sub(r'💬\s?오늘의 김치앤칩스', '', table))> 0:
-                        return re.sub(r'💬\s?오늘의 김치앤칩스', '', table)
-
-                    else : 
-                        return result.find_parent().find_parent().find_next_sibling().text
-                
-                elif table_name == "오늘의 김칩" :
-                    table = result.find_parent().find_parent().text.strip()
-                    if len(re.sub(r'💬\s?오늘의 김칩', '', table))> 0:
-                        return re.sub(r'💬\s?오늘의 김칩', '', table)
-
-                    else : 
-                        return result.find_parent().find_parent().find_next_sibling().text
-                    
-
-            table_of_content = find_table_of_content(table_of_content_name)
-
-            result_text = ''
-            ## 예전 뉴스레터는 목차가 오늘의 주요 MENU라고 나옴 
-            if table_of_content is None:
-                table_menu = soup.find(lambda tag:tag.name=="span" and "오늘의 주요 MENU" in tag.text)
-                if table_menu is not None:
-                    table_menu = table_menu.find_parent().find_next_siblings()
-                    for r in table_menu:
-                        result_text += r.text +"\n"
-                    table_of_content = result_text
-                
-                else : 
-                    table_sosik = soup.find(lambda tag:tag.name=="span" and "오늘의 주요 소식" in tag.text)
-                    if table_sosik is not None:
-                        table_sosik = table_sosik.find_parent().find_parent().next_siblings
-                        for r in table_sosik: 
-                            result_text += r.text +"\n"
-                        table_of_content = result_text
-            
-            print(table_of_content)
+            target_span = soup.find(lambda tag:tag.name=="span" and "오늘의 " in tag.text)
+            table_of_content = crawling.find_table_of_content(target_span)
 
             # content
             content = soup.find("div", "email-content").prettify()
+
 
             result_hash['title'] = title
             result_hash['issue_number'] = issue_number
@@ -133,24 +109,35 @@ class crawling:
             result_hash['table_of_content'] = table_of_content
             result_hash['content'] = content
 
-
             return result_hash 
+
     
     #By ElasticSearch 
     def get_doc_id_by_ES(title, issue_number):
-        doc_id = conectToES.getDocId(title, issue_number)
+        doc_id = connectToES.getDocId(title, issue_number)
         return doc_id
 
     def update_data_in_ES(result_hash):
         doc_id = crawling.get_doc_id_by_ES(result_hash['title'], result_hash['issue_number'])
-        conectToES.updateData(result_hash, doc_id)
+        connectToES.updateData(result_hash, doc_id)
         return 'success'
     
     def insert_data_to_ES(result_hash):
-        conectToES.insertData(result_hash)
+        connectToES.insertData(result_hash)
         return 'success'
     
     def update_tags_in_ES(result_hash):
         doc_id = crawling.get_doc_id_by_ES(result_hash['title'], result_hash['issue_number'])
-        conectToES.updateTags(doc_id, result_hash['tags'])
+        connectToES.updateTags(doc_id, result_hash['tags'])
         return 'success'
+    
+    def update_table_of_content_in_ES(result_hash):
+        doc_id = crawling.get_doc_id_by_ES(result_hash['title'], result_hash['issue_number'])
+        connectToES.updateTableOfContent(doc_id, result_hash['table_of_content'])
+        return 'success'
+        
+    
+
+#result_hash = crawling.extract_data(94) #오늘의 김침 165, 오늘의 깁치앤칩스 134, 오늘의 주요소식 94, 오늘의 주요 MENU 65
+#print("---------------------")#
+#print(result_hash['table_of_content'])

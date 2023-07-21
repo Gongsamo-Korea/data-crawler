@@ -11,7 +11,7 @@ port = config['DEFAULT']['ELASTIC_PORT']
 
 
 es = Elasticsearch('http://'+host+':'+port)
-class conectToES:
+class connectToES:
     def insertData(result_hash):
         index="articles"
         
@@ -62,6 +62,18 @@ class conectToES:
             update_data["doc"]["tags"].extend(tags_list)
             es.update(index='articles', id=doc_id, body=update_data)
             print(doc_id+ " 's tag is updated")
+
+        
+    def updateTableOfContent(doc_id, table_of_content):
+        update_data = {
+            "doc": {
+                "tableOfContent": table_of_content
+            }
+        }
+
+        es.update(index='articles', id=doc_id, body=update_data)
+        print(doc_id + 'table of content updated')
+
 
 
     def getDocId(title,issue_number):

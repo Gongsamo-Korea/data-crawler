@@ -35,6 +35,22 @@ def update_all_to_ES():
 
     return {'data': ' success'}
 
+@app.route("/test/get/<int:page_number>", methods=['POST', 'GET'])
+def test_get(page_number):    
+    result_hash = crawling.extract_data(page_number)
+    return {'data': ' success'}
+
+@app.route("/update/<string:type>/<int:page_number>", methods=['POST', 'GET'])
+def update(type,page_number):    
+    result_hash = crawling.extract_data(page_number)
+    if type == 'table_of_content':
+        crawling.update_table_of_content_in_ES(result_hash)
+    elif type == 'tag':
+        crawling.update_table_of_content_in_ES(result_hash)
+    elif type == 'all':
+        crawling.update_data_in_ES(result_hash)
+    
+    return {'data': ' success'}
 
 
 if __name__ == '__main__':

@@ -97,7 +97,9 @@ class crawling:
                 
             # table of content
             target_span = soup.find(lambda tag:tag.name=="span" and "오늘의 " in tag.text)
-            table_of_content = crawling.find_table_of_content(target_span)
+            table_of_content = None
+            if target_span is not None:
+                table_of_content = crawling.find_table_of_content(target_span)
 
             # content
             content = soup.find("div", "email-content").prettify()

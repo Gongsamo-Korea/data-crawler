@@ -35,6 +35,30 @@ class connectToES:
         
         es.index(index="articles", body=doc)
 
+    def insertDataFromScratch(result_hash, articleId):
+        index="articles"
+        
+    
+        doc = {
+            "articleId" : articleId,
+            "title" : result_hash['title'],
+            "issueNumber" : result_hash['issue_number'],
+            "issueDate" : result_hash['issue_date'],
+            "content" : result_hash['content'],
+            "tableOfContent" : result_hash['table_of_content'],
+            "tags" : []
+        }
+
+        if result_hash['tags'] is not None:
+            tags_list = []
+            for tag in result_hash['tags'] : 
+                dict = {"tagName" : tag}
+                tags_list.append(dict)
+
+            doc["tags"].extend(tags_list)
+        
+        es.index(index="articles", body=doc)
+
     def updateData(result_hash, doc_id):
         update_data = {
             "doc": {

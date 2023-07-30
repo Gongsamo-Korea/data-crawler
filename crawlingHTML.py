@@ -128,6 +128,10 @@ class crawling:
         connectToES.insertData(result_hash)
         return 'success'
     
+    def insert_data_to_ES(result_hash, articleId):
+        #connectToES.insertDataFromScratch(result_hash, articleId)
+        return articleId
+    
     def update_tags_in_ES(result_hash):
         doc_id = crawling.get_doc_id_by_ES(result_hash['title'], result_hash['issue_number'])
         connectToES.updateTags(doc_id, result_hash['tags'])

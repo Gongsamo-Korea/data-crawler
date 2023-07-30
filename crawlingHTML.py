@@ -129,7 +129,7 @@ class crawling:
         return 'success'
     
     def insert_data_to_ES(result_hash, articleId):
-        #connectToES.insertDataFromScratch(result_hash, articleId)
+        connectToES.insertDataFromScratch(result_hash, articleId)
         return articleId
     
     def update_tags_in_ES(result_hash):

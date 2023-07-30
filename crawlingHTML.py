@@ -35,6 +35,7 @@ class crawling:
                 li_list = ul.find_all('li')
                 for li in li_list:
                     result += "{} {} {}".format( bullet_point, li.text, "\n")
+                break
         
         return result
                     
@@ -144,6 +145,7 @@ class crawling:
         
     
 
-#result_hash = crawling.extract_data(94) #오늘의 김침 165, 오늘의 깁치앤칩스 134, 오늘의 주요소식 94, 오늘의 주요 MENU 65
-#print("---------------------")#
-#print(result_hash['table_of_content'])
+
+# result_hash = crawling.extract_data(166) #오늘의 김침 165, 오늘의 깁치앤칩스 134, 오늘의 주요소식 94, 오늘의 주요 MENU 65
+# print("---------------------")#
+# print(result_hash['table_of_content'])

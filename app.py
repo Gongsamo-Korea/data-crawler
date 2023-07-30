@@ -58,7 +58,7 @@ def update(type,page_number):
     if type == 'table_of_content':
         crawling.update_table_of_content_in_ES(result_hash)
     elif type == 'tag':
-        crawling.update_table_of_content_in_ES(result_hash)
+        crawling.update_tags_in_ES(result_hash)
     elif type == 'all':
         crawling.update_data_in_ES(result_hash)
     

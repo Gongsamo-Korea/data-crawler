@@ -117,35 +117,27 @@ class crawling:
     
     #By ElasticSearch 
     def get_doc_id_by_ES(title, issue_number):
-        doc_id = connectToES.getDocId(title, issue_number)
+        doc_id = connectToES.get_doc_Id(title, issue_number)
         return doc_id
 
     def update_data_in_ES(result_hash):
         doc_id = crawling.get_doc_id_by_ES(result_hash['title'], result_hash['issue_number'])
-        connectToES.updateData(result_hash, doc_id)
+        connectToES.update_data(result_hash, doc_id)
         return 'success'
     
     def insert_data_to_ES(result_hash):
-        connectToES.insertData(result_hash)
-        return 'success'
-    
-    def insert_data_to_ES(result_hash, articleId):
-        connectToES.insertDataFromScratch(result_hash, articleId)
-        return articleId
+        article_id = connectToES.get_latest_article_id_by_ES();
+        connectToES.insert_data(result_hash, article_id)
+        return article_id
     
     def update_tags_in_ES(result_hash):
         doc_id = crawling.get_doc_id_by_ES(result_hash['title'], result_hash['issue_number'])
-        connectToES.updateTags(doc_id, result_hash['tags'])
+        connectToES.update_tags(doc_id, result_hash['tags'])
         return 'success'
     
     def update_table_of_content_in_ES(result_hash):
         doc_id = crawling.get_doc_id_by_ES(result_hash['title'], result_hash['issue_number'])
-        connectToES.updateTableOfContent(doc_id, result_hash['table_of_content'])
+        connectToES.update_table_of_content(doc_id, result_hash['table_of_content'])
         return 'success'
         
     
-
-
-result_hash = crawling.extract_data(52) #오늘의 김침 165, 오늘의 깁치앤칩스 134, 오늘의 주요소식 94, 오늘의 주요 MENU 65
-print("---------------------")#
-print(result_hash['table_of_content'])

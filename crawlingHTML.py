@@ -126,9 +126,12 @@ class crawling:
         return 'success'
     
     def insert_data_to_ES(result_hash):
+        doc_id = crawling.get_doc_id_by_ES(result_hash['title'], result_hash['issue_number'])
+        if doc_id is not None: 
+            return 'already_exist'
         article_id = connectToES.get_latest_article_id_by_ES();
         connectToES.insert_data(result_hash, article_id+1)
-        return article_id
+        return 'success'
     
     def update_tags_in_ES(result_hash):
         doc_id = crawling.get_doc_id_by_ES(result_hash['title'], result_hash['issue_number'])

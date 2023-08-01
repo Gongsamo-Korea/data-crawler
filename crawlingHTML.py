@@ -127,7 +127,7 @@ class crawling:
     
     def insert_data_to_ES(result_hash):
         article_id = connectToES.get_latest_article_id_by_ES();
-        connectToES.insert_data(result_hash, article_id)
+        connectToES.insert_data(result_hash, article_id+1)
         return article_id
     
     def update_tags_in_ES(result_hash):

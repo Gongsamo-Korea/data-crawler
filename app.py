@@ -15,8 +15,7 @@ def insert_new_data(page_number):
         result_msg = "NOT FOUND"
     else : 
        result_msg = crawling.insert_data_to_ES(result_hash)
-       
-    return {'data': str(page_number) +' '+result_msg}
+    return {'data': str(page_number)+' ' + ''.join(result_msg)}
 
 @app.route("/update/tags/<int:page_number>", methods=['POST', 'GET'])
 def update_tags_to_ES(page_number):

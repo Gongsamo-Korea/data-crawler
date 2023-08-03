@@ -65,6 +65,9 @@ class crawling:
                 split_title = whole_title.split("🍟")
 
             title = split_title[1][0:].strip()
+            if "&quot;" in title: 
+                title  = re.sub(r"&quot;", "\"", title)
+
 
             # issue_number
             issue_number = ''
@@ -89,6 +92,8 @@ class crawling:
                 whole_tags_list = tags_parent.findChild().text.replace(' ','')
                 tags_list = list(filter(lambda x: x != '', whole_tags_list.split("#")))
                 print(tags_list)
+                result_hash['tags'] = tags_list
+
 
 
 
@@ -107,11 +112,10 @@ class crawling:
 
 
             result_hash['title'] = title
-            result_hash['issue_number'] = issue_number
+            result_hash['issue_number'] = issue_number.strip()
             result_hash['issue_date'] = issue_date
             result_hash['table_of_content'] = table_of_content
             result_hash['content'] = content
-            result_hash['tags'] = tags_list
 
             return result_hash 
 
@@ -143,4 +147,3 @@ class crawling:
         doc_id = crawling.get_doc_id_by_ES(result_hash['title'], result_hash['issue_number'])
         connectToES.update_table_of_content(doc_id, result_hash['table_of_content'])
         return 'success'
-        

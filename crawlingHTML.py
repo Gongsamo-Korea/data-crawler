@@ -64,7 +64,7 @@ class crawling:
             else : 
                 split_title = whole_title.split("🍟")
 
-            title = split_title[1][1:]
+            title = split_title[1][0:].strip()
 
             # issue_number
             issue_number = ''
@@ -143,4 +143,6 @@ class crawling:
         connectToES.update_table_of_content(doc_id, result_hash['table_of_content'])
         return 'success'
         
-    
+
+result_hash = crawling.extract_data(21)
+print(result_hash['title'])

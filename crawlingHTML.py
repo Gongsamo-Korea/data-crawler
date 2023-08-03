@@ -87,9 +87,9 @@ class crawling:
             try:
                 tags_parent = soup.find(lambda tag:tag.name=="a" and mail_content_not_found_text in tag.text)
                 whole_tags_list = tags_parent.findChild().text.replace(' ','')
-                tags_list = whole_tags_list.split("#")[1:]
+                tags_list = list(filter(lambda x: x != '', whole_tags_list.split("#")))
                 print(tags_list)
-                result_hash['tags'] = tags_list
+
 
 
             except (AttributeError, NameError):
@@ -111,6 +111,7 @@ class crawling:
             result_hash['issue_date'] = issue_date
             result_hash['table_of_content'] = table_of_content
             result_hash['content'] = content
+            result_hash['tags'] = tags_list
 
             return result_hash 
 
@@ -143,6 +144,3 @@ class crawling:
         connectToES.update_table_of_content(doc_id, result_hash['table_of_content'])
         return 'success'
         
-
-result_hash = crawling.extract_data(21)
-print(result_hash['title'])

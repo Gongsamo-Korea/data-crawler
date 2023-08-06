@@ -59,10 +59,31 @@ class connectToES:
             for tag in tag_list : 
                 dict = {"tagName" : tag}
                 tags_list.append(dict)
+                
 
             update_data["doc"]["tags"].extend(tags_list)
             es.update(index='articles', id=doc_id, body=update_data)
             print(doc_id+ " 's tag is updated")
+
+    def update_tags_with_tag_Id(doc_id, tag_list, tag_id): #TODO TagId를 어떻게 추가할지 고민이 필요. 각 doc마다 들어가있는 tag들이 독립되어있는건지... 같은건지... 독립되어있는거면 docA 에 있는 tagName이 "환경보호", docB에 있는 tagName "환경보호" 이렇게 들어있으면 tagId를 어떻게 부여해야할지... 
+            if tag_list is not None:
+                update_data = {
+                    "doc" : {
+                        "tags": []
+                    }
+                }
+                tags_list = []
+                for tag in tag_list : 
+                    dict = {"tagId": tag_id}
+                    dict = {"tagName" : tag}
+                    tags_list.append(dict)
+                    tag_id = tag_id+1
+                    
+
+                update_data["doc"]["tags"].extend(tags_list)
+                es.update(index='articles', id=doc_id, body=update_data)
+                print(doc_id+ " 's tag is updated")
+            return tag_id
 
         
     def update_table_of_content(doc_id, table_of_content):
@@ -135,4 +156,3 @@ class connectToES:
 
         return article_id
 
-    

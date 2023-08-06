@@ -89,8 +89,11 @@ class crawling:
             mail_content_not_found_text = "이 메일이 잘 안보이시나요?"
             try:
                 tags_parent = soup.find(lambda tag:tag.name=="a" and mail_content_not_found_text in tag.text)
-                whole_tags_list = tags_parent.findChild().text.replace(' ','')
-                tags_list = list(filter(lambda x: x != '', whole_tags_list.split("#")))
+                # whole_tags_list = tags_parent.findChild().text.replace(' ','')
+                # tags_list = list(filter(lambda x: x != '', whole_tags_list.split("#")))
+                whole_tags_list = tags_parent.text.split("#")[1:]
+                tags_list = [item.strip() for item in whole_tags_list if item.strip() != '']
+                #tags_list = list(filter(lambda x: x != '' or x!= ' ', whole_tags_list))
                 print(tags_list)
                 result_hash['tags'] = tags_list
 
@@ -147,3 +150,5 @@ class crawling:
         doc_id = crawling.get_doc_id_by_ES(result_hash['title'], result_hash['issue_number'])
         connectToES.update_table_of_content(doc_id, result_hash['table_of_content'])
         return 'success'
+
+crawling.extract_data(165)

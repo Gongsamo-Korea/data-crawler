@@ -125,12 +125,12 @@ class connectToES:
     }
 
         result = es.search(index=index, body=query)
-        if result is None: 
+        if result["hits"]["total"]["value"] == 0:
             return None
-
-        doc_id = result["hits"]["hits"][0]["_id"]
-
-        return doc_id
+        
+        else : 
+            doc_id = result["hits"]["hits"][0]["_id"]
+            return doc_id
     
     def get_latest_article_id_by_ES():
         index = "articles"

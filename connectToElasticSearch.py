@@ -154,7 +154,7 @@ class connectToES:
 
         result = es.search(index=index, body=query)
 
-        article_id = result["hits"]["hits"][0]["fields"]["articleId"]
+        article_id = result["hits"]["total"]["value"]
 
         return article_id
 

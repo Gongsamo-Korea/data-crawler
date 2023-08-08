@@ -138,7 +138,7 @@ class crawling:
         if doc_id is not None: 
             return 'already_exist'
         article_id = connectToES.get_latest_article_id_by_ES();
-        connectToES.insert_data(result_hash, int(article_id)+1)
+        connectToES.insert_data(result_hash, article_id+1)
         return 'success'
     
     def update_tags_in_ES(result_hash):
@@ -151,4 +151,3 @@ class crawling:
         connectToES.update_table_of_content(doc_id, result_hash['table_of_content'])
         return 'success'
 
-crawling.extract_data(165)

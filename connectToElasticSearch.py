@@ -125,6 +125,8 @@ class connectToES:
     }
 
         result = es.search(index=index, body=query)
+        if result is None: 
+            return None
 
         doc_id = result["hits"]["hits"][0]["_id"]
 

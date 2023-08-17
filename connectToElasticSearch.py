@@ -102,19 +102,8 @@ class connectToES:
         index = "articles"
         query = {
         "query": {
-            "bool": {
-                "must": [
-                    {
-                        "match": {
-                            "title": title
-                        }
-                    },
-                    {
-                        "match": {
-                            "issueNumber": issue_number
-                        }
-                    }
-                ]
+            "match_phrase": {
+                "title": title
             }
         },
         
